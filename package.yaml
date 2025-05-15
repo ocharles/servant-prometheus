@@ -71,13 +71,13 @@ ghc-options:
   - -Wno-implicit-prelude
 
 dependencies:
-  - base >=4.10 && < 4.21
+  - base >=4.10 && < 4.22
 
 library:
   source-dirs: lib
   dependencies:
     - clock >= 0.8.3 && < 0.9
-    - ghc-prim >= 0.8.0 && < 0.12
+    - ghc-prim >= 0.8.0 && < 0.14
     - hashable >= 1.4.2 && < 1.6
     - http-types >= 0.12.3 && < 0.13
     - prometheus-client >= 1.1.0 && < 1.2
@@ -98,7 +98,7 @@ tests:
       - servant-prometheus
 
       - aeson >= 2.0 && < 2.3
-      - containers >= 0.6.5 && < 0.8
+      - containers >= 0.6.5 && < 0.9
       - hspec >= 2 && < 3
       - hspec-expectations-pretty-diff >= 0.7.2.2 && < 0.8
       - http-client >= 0.7.13 && < 0.8

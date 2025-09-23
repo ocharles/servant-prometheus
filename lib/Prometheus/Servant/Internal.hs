@@ -16,6 +16,7 @@ import GHC.Types (Type)
 import Network.HTTP.Types (Method)
 import Network.Wai (Request (..))
 import Servant.API
+import Servant.Auth (Auth)
 
 -- | Servant 'Endpoint'.
 data Endpoint = Endpoint
@@ -237,6 +238,11 @@ instance HasEndpoint (sub :: Type) => HasEndpoint (CaptureAll (h :: Symbol) a :>
     map qualify $ enumerateEndpoints (Proxy :: Proxy sub)
 
 instance HasEndpoint (sub :: Type) => HasEndpoint (BasicAuth (realm :: Symbol) a :> sub) where
+  getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
+
+  enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)
+
+instance HasEndpoint (sub :: Type) => HasEndpoint (Auth (auths :: [Type]) a :> sub) where
   getEndpoint _ = getEndpoint (Proxy :: Proxy sub)
 
   enumerateEndpoints _ = enumerateEndpoints (Proxy :: Proxy sub)

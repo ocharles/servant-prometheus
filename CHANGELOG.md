@@ -11,6 +11,7 @@ Unreleased
   did not consume the rest of the path like `CaptureAll` does.
   The rest of the path is now captured and replaced with a `*`
   place holder and this is also the case for enumerating the endpoint.
+- Support GHC up to and including 9.12
 
 1.2.0
 =======

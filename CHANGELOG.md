@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add an `HasEndpoint` instance for `ServerSentEvents'` (servant >= 0.20.3)
+
 1.3.0
 =======
 

@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module Prometheus.ServantSpec (spec) where
 
 import Data.Aeson (FromJSON, ToJSON)
@@ -6,7 +8,7 @@ import Data.Text (Text)
 import Data.Text qualified as T
 import GHC.Generics (Generic)
 import Network.HTTP.Client (defaultManagerSettings, newManager)
-import Network.HTTP.Types.Method (methodGet)
+import Network.HTTP.Types.Method (methodGet, methodPost)
 import Network.HTTP.Types.Status (ok200)
 import Network.Wai (Application)
 import Network.Wai qualified as Wai
@@ -85,6 +87,18 @@ spec = describe "servant-prometheus" $ do
                  , Endpoint ["proxy", "*"] "RAW"
                  ]
 
+#if MIN_VERSION_servant(0,20,3)
+  it "enumerates and matches server-sent events endpoints" $ do
+    enumerateEndpoints sseApi
+      `shouldBe` [Endpoint ["events"] "GET", Endpoint ["raw"] "POST"]
+    getEndpoint sseApi Wai.defaultRequest{Wai.pathInfo = ["events"], Wai.requestMethod = methodGet}
+      `shouldBe` Just (Endpoint ["events"] "GET")
+    getEndpoint sseApi Wai.defaultRequest{Wai.pathInfo = ["raw"], Wai.requestMethod = methodGet}
+      `shouldBe` Nothing
+    getEndpoint sseApi Wai.defaultRequest{Wai.pathInfo = ["raw"], Wai.requestMethod = methodPost}
+      `shouldBe` Just (Endpoint ["raw"] "POST")
+#endif
+
 -- * Example
 
 -- | A greet message data type
@@ -108,6 +122,15 @@ type TestApi =
 
 testApi :: Proxy TestApi
 testApi = Proxy
+
+#if MIN_VERSION_servant(0,20,3)
+type SseApi =
+  "events" :> Servant.ServerSentEvents 'Servant.JsonEvent Greet
+    :<|> "raw" :> Servant.ServerSentEvents' 'Servant.POST 200 'Servant.RawEvent Text
+
+sseApi :: Proxy SseApi
+sseApi = Proxy
+#endif
 
 -- | Server-side handlers.
 --

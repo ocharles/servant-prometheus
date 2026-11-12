@@ -220,6 +220,19 @@ instance ReflectMethod method => HasEndpoint (Stream method status framing ct a)
     where
       method = reflectMethod (Proxy :: Proxy method)
 
+#if MIN_VERSION_servant(0,20,3)
+instance ReflectMethod method => HasEndpoint (ServerSentEvents' method status kind a) where
+  getEndpoint _ req = case pathInfo req of
+    [] | requestMethod req == method -> Just (Endpoint [] method)
+    _ -> Nothing
+    where
+      method = reflectMethod (Proxy :: Proxy method)
+
+  enumerateEndpoints _ = [Endpoint mempty method]
+    where
+      method = reflectMethod (Proxy :: Proxy method)
+#endif
+
 instance HasEndpoint Raw where
   getEndpoint _ _ = Just (Endpoint [] "RAW")
 
